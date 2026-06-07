@@ -1,72 +1,55 @@
 // app/page.tsx
-import { runQuery, runExecute } from './lib/db';
 import ClientDashboard from './ClientDashboard';
 
-// ✅ SERVER COMPONENT
+// ✅ ALL DATA HARDCODED — SAME AS BEFORE, NO DATABASE NEEDED
 export default async function HomePage() {
-  // 1. Create tables if they don't exist
-  await runExecute(`
-    CREATE TABLE IF NOT EXISTS financial (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      date TEXT,
-      category TEXT,
-      amount REAL,
-      description TEXT
-    )
-  `);
 
-  await runExecute(`
-    CREATE TABLE IF NOT EXISTS tourism (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      year INTEGER,
-      location TEXT,
-      visitor_count INTEGER,
-      revenue REAL,
-      season TEXT
-    )
-  `);
+  // --------------------------
+  // FINANCIAL DATA
+  // --------------------------
+  const financial = [
+    { id: 1, date: '2026-01-15', category: 'Transport', amount: 1250000, description: 'Fuel and vehicle maintenance' },
+    { id: 2, date: '2026-02-03', category: 'Accommodation', amount: 3800000, description: 'Hotel and guest house expenses' },
+    { id: 3, date: '2026-02-20', category: 'Food & Beverage', amount: 950000, description: 'Restaurant and catering supplies' },
+    { id: 4, date: '2026-03-10', category: 'Marketing', amount: 2100000, description: 'Online ads and brochures' },
+    { id: 5, date: '2026-04-05', category: 'Staff', amount: 4500000, description: 'Salaries and benefits' }
+  ];
 
-  // 2. Add sample data — ONLY IF EMPTY
-  const financialCount = await runQuery(`SELECT COUNT(*) as count FROM financial`);
-  if (financialCount[0].count === 0) {
-    await runExecute(`
-      INSERT INTO financial (date, category, amount, description) VALUES
-      ('2026-01-15', 'Transport', 1250000, 'Fuel and vehicle maintenance'),
-      ('2026-02-03', 'Accommodation', 3800000, 'Hotel and guest house expenses'),
-      ('2026-02-20', 'Food & Beverage', 950000, 'Restaurant and catering supplies'),
-      ('2026-03-10', 'Marketing', 2100000, 'Online ads and brochures'),
-      ('2026-04-05', 'Staff', 4500000, 'Salaries and benefits')
-    `);
-  }
+  // --------------------------
+  // TOURISM DATA
+  // --------------------------
+  const tourism = [
+    { id: 1, year: 2023, location: 'Luanda', visitor_count: 145000, revenue: 285000000, season: 'High' },
+    { id: 2, year: 2023, location: 'Benguela', visitor_count: 68000, revenue: 122000000, season: 'High' },
+    { id: 3, year: 2023, location: 'Namibe', visitor_count: 42000, revenue: 89000000, season: 'Medium' },
+    { id: 4, year: 2024, location: 'Luanda', visitor_count: 172000, revenue: 340000000, season: 'High' },
+    { id: 5, year: 2024, location: 'Benguela', visitor_count: 79000, revenue: 148000000, season: 'High' },
+    { id: 6, year: 2024, location: 'Namibe', visitor_count: 51000, revenue: 110000000, season: 'High' }
+  ];
 
-  const tourismCount = await runQuery(`SELECT COUNT(*) as count FROM tourism`);
-  if (tourismCount[0].count === 0) {
-    await runExecute(`
-      INSERT INTO tourism (year, location, visitor_count, revenue, season) VALUES
-      (2023, 'Luanda', 145000, 285000000, 'High'),
-      (2023, 'Benguela', 68000, 122000000, 'High'),
-      (2023, 'Namibe', 42000, 89000000, 'Medium'),
-      (2024, 'Luanda', 172000, 340000000, 'High'),
-      (2024, 'Benguela', 79000, 148000000, 'High'),
-      (2024, 'Namibe', 51000, 110000000, 'High')
-    `);
-  }
+  // --------------------------
+  // CHART DATA
+  // --------------------------
+  const revenueByYear = [
+    { year: 2023, total_revenue: 496000000 },
+    { year: 2024, total_revenue: 598000000 }
+  ];
+  const visitorsByLoc = [
+    { location: 'Luanda', total_visitors: 317000 },
+    { location: 'Benguela', total_visitors: 147000 },
+    { location: 'Namibe', total_visitors: 93000 }
+  ];
+  const financeBreakdown = [
+    { category: 'Transport', total_amount: 1250000 },
+    { category: 'Accommodation', total_amount: 3800000 },
+    { category: 'Food & Beverage', total_amount: 950000 },
+    { category: 'Marketing', total_amount: 2100000 },
+    { category: 'Staff', total_amount: 4500000 }
+  ];
 
-  // 3. Fetch data
-  const financial = await runQuery(`SELECT * FROM financial ORDER BY date DESC`);
-  const tourism = await runQuery(`SELECT * FROM tourism ORDER BY year DESC, location ASC`);
-  
-  const revenueByYear = await runQuery(`
-    SELECT year, SUM(revenue) as total_revenue FROM tourism GROUP BY year ORDER BY year
-  `);
-  const visitorsByLoc = await runQuery(`
-    SELECT location, SUM(visitor_count) as total_visitors FROM tourism GROUP BY location
-  `);
-  const financeBreakdown = await runQuery(`
-    SELECT category, SUM(amount) as total_amount FROM financial GROUP BY category
-  `);
-
-  // 4. KNOWLEDGE ARTICLES
+  // --------------------------
+  // KNOWLEDGE ARTICLES
+  // --------------------------
   const knowledgeArticles = [
     {
       id: 1,
@@ -105,7 +88,9 @@ At AngolaLab, we believe: *When we hold and lift up the youth, we hold and lift 
     }
   ];
 
-  // 5. PASS EVERYTHING
+  // --------------------------
+  // PAGE LAYOUT
+  // --------------------------
   return (
     <div style={{ 
       minHeight: '100vh',
@@ -217,7 +202,7 @@ At AngolaLab, we believe: *When we hold and lift up the youth, we hold and lift 
         />
 
 
-        {/* ✅ YOUR SYSTEM THINKING NOTE — NEW PERMANENT SECTION */}
+        {/* ✅ SYSTEM THINKING NOTE */}
         <section style={{
           marginTop: '6rem',
           padding: '2rem',
